@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintAPI", "PrintAPI\PrintAPI.csproj", "{9A871730-622E-4550-AD9F-BAFC9F7EDE05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{61851B87-EAA6-461C-A481-4667D4C35F7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTest", "ConsoleTest\ConsoleTest.csproj", "{BB645EA4-65A5-46E7-8831-C28665707314}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9A871730-622E-4550-AD9F-BAFC9F7EDE05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A871730-622E-4550-AD9F-BAFC9F7EDE05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A871730-622E-4550-AD9F-BAFC9F7EDE05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A871730-622E-4550-AD9F-BAFC9F7EDE05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61851B87-EAA6-461C-A481-4667D4C35F7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61851B87-EAA6-461C-A481-4667D4C35F7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61851B87-EAA6-461C-A481-4667D4C35F7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61851B87-EAA6-461C-A481-4667D4C35F7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB645EA4-65A5-46E7-8831-C28665707314}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB645EA4-65A5-46E7-8831-C28665707314}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB645EA4-65A5-46E7-8831-C28665707314}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB645EA4-65A5-46E7-8831-C28665707314}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
