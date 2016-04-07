@@ -61,19 +61,21 @@ namespace Rowdy.API.OAuth
         {
             while (authenticationInProgess)
             {
-                // do something to wait
+                // HACK Fix this in to something nicer
+                // Do something to wait
                 System.Diagnostics.Debug.WriteLine("Waiting for Authentication to complete");
             }
 
             if (token == null || String.IsNullOrEmpty(token.TokenString) || token.Expiration < DateTime.Now)
-            {
-                // Token needs to be refreshed
-                authenticationInProgess = true;                
-                var client = HttpClientFactory.Create();
-                var builder = new UriBuilder(new Uri(baseUri, "oauth"));
-                var credentials = GetCredentialsDictionary();
+            {                
                 try
                 {
+                    // Token needs to be refreshed
+                    authenticationInProgess = true;
+                    var client = HttpClientFactory.Create();
+                    var builder = new UriBuilder(new Uri(baseUri, "oauth"));
+                    var credentials = GetCredentialsDictionary();
+
                     var httpResponse = await client.PostAsync(builder.Uri, new FormUrlEncodedContent(credentials));
                     var response = await httpResponse.Content.ReadAsAsync<dynamic>();
                     token = new Token
@@ -100,7 +102,10 @@ namespace Rowdy.API.OAuth
 #endif
                     throw new PrintAPI.PrintAPIException("Error while authenticating to server", e);
                 }
-                authenticationInProgess = false;
+                finally
+                {
+                    authenticationInProgess = false;
+                }
             }
         }
         
