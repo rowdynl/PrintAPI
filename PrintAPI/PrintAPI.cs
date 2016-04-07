@@ -91,9 +91,9 @@ namespace Rowdy.API.PrintAPI
         public Shipping.ShippingQuoteResponse RequestShippingQuote(Shipping.ShippingQuoteRequest request)
         {
             var t = client.Post("shipping/quote", JsonConvert.SerializeObject(request));
-            t.Wait();
+            t.Wait();            
 
-            return JsonConvert.DeserializeObject<Shipping.ShippingQuoteResponse>(t.Result);
+            return JsonConvert.DeserializeObject<Shipping.ShippingQuoteResponse>(Convert.ToString(t.Result));
         }
         #endregion
         #region Uploads

@@ -14,6 +14,7 @@ namespace Rowdy.API.OAuth
         private string clientId;
         private string clientSecret;
         private string scope;
+        private bool authenticationInProgess;
 
         /// <summary>
         /// Initialize the OAuthClient
@@ -58,9 +59,16 @@ namespace Rowdy.API.OAuth
         /// </summary>
         internal async void RefreshToken()
         {
+            while (authenticationInProgess)
+            {
+                // do something to wait
+                System.Diagnostics.Debug.WriteLine("Waiting for Authentication to complete");
+            }
+
             if (token == null || String.IsNullOrEmpty(token.TokenString) || token.Expiration < DateTime.Now)
             {
                 // Token needs to be refreshed
+                authenticationInProgess = true;                
                 var client = HttpClientFactory.Create();
                 var builder = new UriBuilder(new Uri(baseUri, "oauth"));
                 var credentials = GetCredentialsDictionary();
@@ -92,6 +100,7 @@ namespace Rowdy.API.OAuth
 #endif
                     throw new PrintAPI.PrintAPIException("Error while authenticating to server", e);
                 }
+                authenticationInProgess = false;
             }
         }
         
