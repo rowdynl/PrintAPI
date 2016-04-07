@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace Rowdy.API.OAuth
 {
+    /// <summary>
+    /// 
+    /// </summary>
     class OAuthClient
     {
         private Token token;
@@ -41,15 +43,39 @@ namespace Rowdy.API.OAuth
             return (token != null && !String.IsNullOrEmpty(token.TokenString) && token.Expiration > DateTime.Now);
         }
 
-        public async Task<dynamic> Post(string path, string content)
+        /// <summary>
+        /// Runs an authenticated POST command to the server
+        /// </summary>
+        /// <param name="path">The path wich we must post to</param>
+        /// <param name="content">The content we should post</param>
+        /// <param name="contentType">A specific content type. Defaults to JSON</param>
+        /// <returns>A dynamic object (mostly JSON) with the results</returns>
+        public async Task<dynamic> Post(string path, string content, string contentType = "application/json")
         {
             RefreshToken();
 
             var client = HttpClientFactory.Create();            
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.TokenType, token.TokenString);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            var httpContent = new StringContent(content, System.Text.Encoding.UTF8, "application/json");
+            var httpContent = new StringContent(content, System.Text.Encoding.UTF8, contentType);
             var httpResponse = await client.PostAsync(new Uri(baseUri, path), httpContent);
+
+            return await httpResponse.Content.ReadAsAsync<dynamic>();
+        }
+
+        /// <summary>
+        /// Runs a authenticated GET command to the server
+        /// </summary>
+        /// <param name="path">The path wich we must request</param>
+        /// <returns>A dynamic object (mostly JSON) with the results</returns>
+        public async Task<dynamic> Get(string path)
+        {
+            RefreshToken();
+
+            var client = HttpClientFactory.Create();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.TokenType, token.TokenString);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var httpResponse = await client.GetAsync(new Uri(baseUri, path));
 
             return await httpResponse.Content.ReadAsAsync<dynamic>();
         }
@@ -63,7 +89,7 @@ namespace Rowdy.API.OAuth
             {
                 // HACK Fix this in to something nicer
                 // Do something to wait
-                System.Diagnostics.Debug.WriteLine("Waiting for Authentication to complete");
+                System.Diagnostics.Debug.WriteLine("Waiting for Authentication to complete..");
             }
 
             if (token == null || String.IsNullOrEmpty(token.TokenString) || token.Expiration < DateTime.Now)
@@ -109,7 +135,10 @@ namespace Rowdy.API.OAuth
             }
         }
         
-
+        /// <summary>
+        /// Internal helper function to create a credential object
+        /// </summary>
+        /// <returns>A key value pair wich we use to autheticate against the server</returns>
         internal IEnumerable<KeyValuePair<string, string>> GetCredentialsDictionary()
         {
             var dict = new Dictionary<string, string>();

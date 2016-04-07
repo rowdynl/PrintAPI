@@ -1,5 +1,44 @@
-﻿namespace Rowdy.API.PrintAPI
+﻿
+namespace Rowdy.API.PrintAPI
 {
+    /// <summary>
+    /// Address format
+    /// </summary>
+    public class Address
+    {
+        /// <summary>
+        /// Optional company name
+        /// </summary>
+        public string company { get; set; }
+        /// <summary>
+        /// Full name
+        /// </summary>
+        public string name { get; set; }
+        /// <summary>
+        /// First address line
+        /// </summary>
+        public string line1 { get; set; }
+        /// <summary>
+        /// Second address line
+        /// </summary>
+        public string line2 { get; set; }
+        /// <summary>
+        /// Postal code (ZIP code)
+        /// </summary>
+        public string postCode { get; set; }
+        /// <summary>
+        /// City name
+        /// </summary>
+        public string city { get; set; }
+        /// <summary>
+        /// ISO 3166-1-alpha-2 country code
+        /// </summary>
+        public string country { get; set; }
+    }
+
+    /// <summary>
+    /// ISO 3166-1 alpha 2 country codes
+    /// </summary>
     public class Country
     {
         public const string Afghanistan = "AF";
@@ -249,3 +288,4 @@
         public const string Zimbabwe = "ZW";
     }
 }
+

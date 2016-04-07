@@ -27,9 +27,8 @@ namespace UnitTest
             printAPIClient.Authenticate(CLIENTID, SECRET, Client.Environment.TEST);
 
             var items = new List<Rowdy.API.PrintAPI.Shipping.Item>();
-            items.Add(new Rowdy.API.PrintAPI.Shipping.Item { productId = Product.Aluminium20x30cm, quantity = 1 });
-            items.Add(new Rowdy.API.PrintAPI.Shipping.Item { productId = Product.Tuinposter50x50cm, quantity = 1 });
-
+            items.Add(new Rowdy.API.PrintAPI.Shipping.Item { productId = Product.Fotoprints15x10cm, quantity = 1 });
+            
             var request = new Rowdy.API.PrintAPI.Shipping.ShippingQuoteRequest
             {
                 country = Country.Netherlands,
