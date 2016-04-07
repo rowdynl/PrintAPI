@@ -9,71 +9,98 @@ namespace Rowdy.API.OAuth
 {
     class OAuthClient
     {
-        private Token _token;
-        private Uri _baseUri;
-        private string _clientId;
-        private string _clientSecret;
-        private string _scope;
+        private Token token;
+        private Uri baseUri;
+        private string clientId;
+        private string clientSecret;
+        private string scope;
 
-
-        public Boolean Authorize(Uri baseUri, string clientId, string clientSecret)
+        /// <summary>
+        /// Initialize the OAuthClient
+        /// </summary>
+        /// <param name="uri">The base Uri to wich we communicate</param>
+        public OAuthClient(Uri uri)
         {
-            _baseUri = baseUri;
-            _clientId = clientId;
-            _clientSecret = clientSecret;
+            baseUri = uri;
+        }
+
+        /// <summary>
+        /// Authenticate against the server
+        /// </summary>
+        /// <param name="id">The client id</param>
+        /// <param name="secret">The secret key</param>
+        /// <returns></returns>
+        public Boolean Authenticate(string id, string secret)
+        {
+            clientId = id;
+            clientSecret = secret;
 
             RefreshToken();
 
-            return true;
+            return (token != null && !String.IsNullOrEmpty(token.TokenString) && token.Expiration > DateTime.Now);
         }
 
+        public async Task<dynamic> Post(string path, string content)
+        {
+            RefreshToken();
+
+            var client = HttpClientFactory.Create();            
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.TokenType, token.TokenString);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var httpContent = new StringContent(content, System.Text.Encoding.UTF8, "application/json");
+            var httpResponse = await client.PostAsync(new Uri(baseUri, path), httpContent);
+
+            return await httpResponse.Content.ReadAsAsync<dynamic>();
+        }
+
+        /// <summary>
+        /// Refreshes the authentication token, if necessary (ie token expired, token not set)
+        /// </summary>
         internal async void RefreshToken()
         {
-
-            var client = HttpClientFactory.Create();
-            var builder = new UriBuilder(new Uri(_baseUri, "oauth"));
-            var credentials = GetCredentialsDictionary();
-            try
+            if (token == null || String.IsNullOrEmpty(token.TokenString) || token.Expiration < DateTime.Now)
             {
-                var httpResponse = await client.PostAsync(builder.Uri, new FormUrlEncodedContent(credentials));
-
-                //if (httpResponse.StatusCode == HttpStatusCode.OK)
+                // Token needs to be refreshed
+                var client = HttpClientFactory.Create();
+                var builder = new UriBuilder(new Uri(baseUri, "oauth"));
+                var credentials = GetCredentialsDictionary();
+                try
                 {
+                    var httpResponse = await client.PostAsync(builder.Uri, new FormUrlEncodedContent(credentials));
                     var response = await httpResponse.Content.ReadAsAsync<dynamic>();
-                    _token = new Token
+                    token = new Token
                     {
                         TokenString = response.access_token,
                         TokenType = response.token_type,
                         Expiration = DateTime.Now.Add(TimeSpan.FromSeconds((double)response.expires_in))
                     };
-                    _scope = response.scope;
+                    scope = response.scope;
+
+#if DEBUG
+                    // Debugging information
+                    System.Diagnostics.Debug.WriteLine(httpResponse.StatusCode);
+                    System.Diagnostics.Debug.WriteLine(token.Expiration);
+                    System.Diagnostics.Debug.WriteLine(token.TokenString);
+                    System.Diagnostics.Debug.WriteLine(scope);
+#endif
                 }
-                System.Diagnostics.Debug.WriteLine(httpResponse.StatusCode);
-                System.Diagnostics.Debug.WriteLine(HttpStatusCode.OK);
-                System.Diagnostics.Debug.WriteLine(_token.Expiration);
-                System.Diagnostics.Debug.WriteLine(_token.TokenString);
-                System.Diagnostics.Debug.WriteLine(_scope);
-                //throw new Exception("HTTP error occured - " + httpResponse.StatusCode);
+                catch (Exception e)
+                {
+#if DEBUG
+                    // Debugging information
+                    System.Diagnostics.Debug.WriteLine(e.ToString());
+#endif
+                    throw new PrintAPI.PrintAPIException("Error while authenticating to server", e);
+                }
             }
-            catch(Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
-            }
-
-            
-
         }
-
-        public string tokenstring()
-        {
-            return "";// _token.TokenString != null ? _token.TokenString : "";
-        }
+        
 
         internal IEnumerable<KeyValuePair<string, string>> GetCredentialsDictionary()
         {
             var dict = new Dictionary<string, string>();
-            dict.Add("client_id", _clientId);
-            dict.Add("client_secret", _clientSecret);
+            dict.Add("client_id", clientId);
+            dict.Add("client_secret", clientSecret);
             dict.Add("grant_type", "client_credentials");
             return dict;
         }

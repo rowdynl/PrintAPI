@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<OrderedTest name="Ordered Test" storage="c:\users\rschwachofer\onedrive\projects\apps\common\printapi\unittest\orderedtest1.orderedtest" id="b699c56f-d0de-4675-b383-ac94c6117a17" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestLinks>
+    <TestLink id="44bfcbed-3288-93f7-ee76-fe53be6cd65c" name="TestAuthentication" storage="bin\debug\unittest.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  </TestLinks>
+</OrderedTest>

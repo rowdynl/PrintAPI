@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using Newtonsoft.Json;
 
-namespace Rowdy.API
+namespace Rowdy.API.PrintAPI
 {
     /// <summary>
     /// A simple Print API REST client.
@@ -16,7 +20,7 @@ namespace Rowdy.API
     /// @Author Rowdy Schwachöfer
     /// @copyright 2016 - http://rowdy.nl
     /// </summary>
-     public class PrintAPI
+     public class Client
     {
         const string LIVE_BASE_URI = @"https://live.printapi.nl/v1/";
         const string TEST_BASE_URI = @"https://test.printapi.nl/v1/";
@@ -38,53 +42,69 @@ namespace Rowdy.API
         public void Authenticate(string clientId, string secret, Environment environment = Environment.TEST)
         {
            
-            var authorizationServerUri = new Uri(environment == Environment.LIVE ? LIVE_BASE_URI : TEST_BASE_URI);
+            var serverUri = new Uri(environment == Environment.LIVE ? LIVE_BASE_URI : TEST_BASE_URI);
 
-            client = new OAuth.OAuthClient();
-            client.Authorize(authorizationServerUri, clientId, secret);
+            client = new OAuth.OAuthClient(serverUri);
+            client.Authenticate(clientId, secret);
             
                         
+        }        
+
+        #region Orders
+        public void PostOrder()
+        {
+
         }
 
-        public string tokenString()
+        public void GetOrder(string orderId)
         {
-            return client.tokenstring();
+
         }
 
-        /// <summary>
-        ///  Returns the base URI of the specified Print API environment
-        /// </summary>
-        /// <param name="environment">The environment you would like to authenticate for: Test (default) or Live</param>
-        /// <returns>The base URI of the specified Print API environment.</returns>
-        static private Uri baseUrl(Environment environment)
+        public void GetOrderStatus(string orderId)
         {
-            switch(environment)
-            {
-                case Environment.TEST:
-                    return new Uri(TEST_BASE_URI);
-                case Environment.LIVE:
-                    return new Uri(LIVE_BASE_URI);
-                default:
-                    throw new Exception("");
-            }
-        }
-    }
 
-    public class PrintAPIException : Exception
-    {
-        public PrintAPIException()
-        {
         }
 
-        public PrintAPIException(string message)
-            : base(message)
+        public void GetOrders(int limit, int offset)
         {
+
         }
 
-        public PrintAPIException(string message, Exception inner)
-            : base(message, inner)
+        public void GetOrderStatusUpdates(DateTime since)
         {
+
         }
+        #endregion
+        #region Checkout
+        public void PostCheckout(string orderId)
+        {
+
+        }
+
+        public void GetCheckoutStatus(string orderId)
+        {
+
+        }
+        #endregion
+        #region Shipping
+        public Shipping.ShippingQuoteResponse RequestShippingQuote(Shipping.ShippingQuoteRequest request)
+        {
+            var t = client.Post("shipping/quote", JsonConvert.SerializeObject(request));
+            t.Wait();
+
+            return JsonConvert.DeserializeObject<Shipping.ShippingQuoteResponse>(t.Result);
+        }
+        #endregion
+        #region Uploads
+        public void UploadFile()
+        {
+
+        }
+        #endregion
+        #region Helpers
+        //private dynamic 
+        #endregion
     }
     
 }
@@ -302,13 +322,4 @@ namespace Rowdy.API
         return json_decode($result);
     }
 }
-/**
- * Generic exception thrown by the Print API client.
- 
-class PrintApiException extends Exception
-{ }
-/**
- * Exception thrown by the Print API client for failed API calls.
- 
-class PrintApiResponseException extends PrintApiException
-{ }*/
+*/
