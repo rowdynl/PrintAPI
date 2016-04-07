@@ -10,7 +10,12 @@ namespace Rowdy.API.PrintAPI.Shipping
         /// <summary>
         /// The product ID
         /// </summary>
-        public string productId { get; set; }
+        private string _productId;
+        public string productId
+        {
+            get { return _productId; }
+            set { _productId = value.TrimMaxLength(32); }
+        }
 
         /// <summary>
         /// The number of pages, if applicable
@@ -32,12 +37,22 @@ namespace Rowdy.API.PrintAPI.Shipping
         /// <summary>
         /// ISO 3166-2:US state code
         /// </summary>
-        public string state { get; set; }
+        private string _state;
+        public string state
+        {
+            get { return _state; }
+            set { _state = value.TrimMaxLength(2); }
+        }
 
         /// <summary>
         /// ISO 3166-1-alpha-2 country code
         /// </summary>
-        public string country { get; set; }
+        private string _country;
+        public string country
+        {
+            get { return _country; }
+            set { _country = value.TrimMaxLength(2); }
+        }
 
         /// <summary>
         /// The item(s) you want to ship
@@ -54,26 +69,26 @@ namespace Rowdy.API.PrintAPI.Shipping
         /// <summary>
         /// The shipping cost you will be charged, excluding tax
         /// </summary>
-        public decimal shipping { get; set; }
+        public decimal shipping { get; }
 
         /// <summary>
         /// The handling cost you will be charged, excluding tax
         /// </summary>
-        public decimal handling { get; set; }
+        public decimal handling { get; }
 
         /// <summary>
         /// The amount charged on the payment screen, including tax
         /// </summary>
-        public decimal payment { get; set; }
+        public decimal payment { get; }
 
         /// <summary>
         /// The tax rate, either 0.06 or 0.21
         /// </summary>
-        public decimal taxrate { get; set; }
+        public decimal taxrate { get; }
 
         /// <summary>
         /// The shipping method most likely to be used
         /// </summary>
-        public string method { get; set; }
+        public string method { get; }
     }
 }

@@ -56,7 +56,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Checkout.cs" />
     <Compile Include="Common.cs" />
+    <Compile Include="CustomExtensions.cs" />
     <Compile Include="OAuth.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="PrintAPI.cs" />
@@ -69,6 +71,9 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

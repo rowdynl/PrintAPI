@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using static System.Diagnostics.Debug;
 
 namespace Rowdy.API.OAuth
 {
@@ -33,12 +34,13 @@ namespace Rowdy.API.OAuth
         /// <param name="id">The client id</param>
         /// <param name="secret">The secret key</param>
         /// <returns></returns>
-        public Boolean Authenticate(string id, string secret)
+        public async Task<bool> Authenticate(string id, string secret)
         {
             clientId = id;
             clientSecret = secret;
 
-            RefreshToken();
+            await RefreshToken();
+
 
             return (token != null && !String.IsNullOrEmpty(token.TokenString) && token.Expiration > DateTime.Now);
         }
@@ -52,7 +54,7 @@ namespace Rowdy.API.OAuth
         /// <returns>A dynamic object (mostly JSON) with the results</returns>
         public async Task<dynamic> Post(string path, string content, string contentType = "application/json")
         {
-            RefreshToken();
+            await RefreshToken();
 
             var client = HttpClientFactory.Create();            
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.TokenType, token.TokenString);
@@ -70,7 +72,7 @@ namespace Rowdy.API.OAuth
         /// <returns>A dynamic object (mostly JSON) with the results</returns>
         public async Task<dynamic> Get(string path)
         {
-            RefreshToken();
+            await RefreshToken();
 
             var client = HttpClientFactory.Create();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.TokenType, token.TokenString);
@@ -83,17 +85,17 @@ namespace Rowdy.API.OAuth
         /// <summary>
         /// Refreshes the authentication token, if necessary (ie token expired, token not set)
         /// </summary>
-        internal async void RefreshToken()
+        internal async Task RefreshToken()
         {
             while (authenticationInProgess)
             {
                 // HACK Fix this in to something nicer
                 // Do something to wait
-                System.Diagnostics.Debug.WriteLine("Waiting for Authentication to complete..");
+                WriteLine("Waiting for Authentication to complete..");
             }
 
             if (token == null || String.IsNullOrEmpty(token.TokenString) || token.Expiration < DateTime.Now)
-            {                
+            {
                 try
                 {
                     // Token needs to be refreshed
@@ -114,17 +116,14 @@ namespace Rowdy.API.OAuth
 
 #if DEBUG
                     // Debugging information
-                    System.Diagnostics.Debug.WriteLine(httpResponse.StatusCode);
-                    System.Diagnostics.Debug.WriteLine(token.Expiration);
-                    System.Diagnostics.Debug.WriteLine(token.TokenString);
-                    System.Diagnostics.Debug.WriteLine(scope);
+                    WriteLine($"Response status code: {httpResponse.StatusCode}\nToken expiration: {token.Expiration}\nValid for scope: {scope}");
 #endif
                 }
                 catch (Exception e)
                 {
 #if DEBUG
                     // Debugging information
-                    System.Diagnostics.Debug.WriteLine(e.ToString());
+                    WriteLine($"ERROR: Error while Authenticating to server\n{e.ToString()}");
 #endif
                     throw new PrintAPI.PrintAPIException("Error while authenticating to server", e);
                 }

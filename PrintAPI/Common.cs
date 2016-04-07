@@ -37,6 +37,29 @@ namespace Rowdy.API.PrintAPI
     }
 
     /// <summary>
+    /// The status of a Print API checkout payment
+    /// </summary>
+    public class PaymentStatus
+    {
+        /// <summary>
+        /// The payment is open
+        /// </summary>
+        public const string Open = "Open";
+        /// <summary>
+        /// The payment failed
+        /// </summary>
+        public const string Failed = "Failed";
+        /// <summary>
+        /// The payment succeeded
+        /// </summary>
+        public const string Successful = "Successful";
+        /// <summary>
+        /// The payment was cancelled
+        /// </summary>
+        public const string Cancelled = "Cancelled";
+    }
+
+    /// <summary>
     /// ISO 3166-1 alpha 2 country codes
     /// </summary>
     public class Country

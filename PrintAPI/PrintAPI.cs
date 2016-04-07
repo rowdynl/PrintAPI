@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using Newtonsoft.Json;
+using static System.Diagnostics.Debug;
 
 namespace Rowdy.API.PrintAPI
 {
@@ -45,7 +46,8 @@ namespace Rowdy.API.PrintAPI
             var serverUri = new Uri(environment == Environment.LIVE ? LIVE_BASE_URI : TEST_BASE_URI);
 
             client = new OAuth.OAuthClient(serverUri);
-            client.Authenticate(clientId, secret);
+            var task = client.Authenticate(clientId, secret);
+            task.Wait();
             
                         
         }        
@@ -77,22 +79,38 @@ namespace Rowdy.API.PrintAPI
         }
         #endregion
         #region Checkout
-        public void PostCheckout(string orderId)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public Checkout.CheckoutResponse Checkout(string orderId, Checkout.CheckoutRequest request)
         {
-
+            var t = client.Post($"checkout/{orderId}", JsonConvert.SerializeObject(request));
+            return JsonConvert.DeserializeObject<Checkout.CheckoutResponse>(Convert.ToString(t.Result));
         }
 
-        public void GetCheckoutStatus(string orderId)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public Checkout.CheckoutResponse CheckoutStatus(string orderId)
         {
-
+            var t = client.Get($"checkout/{orderId}");
+            return JsonConvert.DeserializeObject<Checkout.CheckoutResponse>(Convert.ToString(t.Result));
         }
         #endregion
         #region Shipping
+        /// <summary>
+        /// Request the shipping costs for a given number of items and a countrycode
+        /// </summary>
+        /// <param name="request">A ShippingQuoteRequest object containing a request to be send</param>
+        /// <returns>A ShippingQuoteResponse object with the shipping quote data</returns>
         public Shipping.ShippingQuoteResponse RequestShippingQuote(Shipping.ShippingQuoteRequest request)
         {
             var t = client.Post("shipping/quote", JsonConvert.SerializeObject(request));
-            t.Wait();            
-
             return JsonConvert.DeserializeObject<Shipping.ShippingQuoteResponse>(Convert.ToString(t.Result));
         }
         #endregion

@@ -4,6 +4,54 @@ using System.Collections.Generic;
 namespace Rowdy.API.PrintAPI.Order
 {
     /// <summary>
+    /// Request to send an order.
+    /// You must include at least one item and a shipping address. Optionally, you can specify your own custom order ID — Print API will automatically generate a random ID if you don't — plus up to about 1kb of metadata you'd like to store with your order.
+    /// </summary>
+    public class OrderRequest
+    {
+        /// <summary>
+        /// Optional custom order ID
+        /// </summary>
+        private string _id;
+        public string id
+        {
+            get { return _id; }
+            set { _id = value.TrimMaxLength(36); }
+        }
+
+        /// <summary>
+        /// Optional user e-mail address
+        /// </summary>
+        private string _email;
+        public string email
+        {
+            get { return _email; }
+            set { _email = value.TrimMaxLength(254); }
+        }
+
+        /// <summary>
+        /// The item(s) you want to order
+        /// </summary>
+        public List<ItemIn> items { get; set; }
+
+        /// <summary>
+        /// The address to which to ship the order
+        /// </summary>
+        public Address shippingAddress { get; set; }
+
+        /// <summary>
+        /// Optional arbitrary metadaat
+        /// </summary>
+        private string _metadata;
+        public string metadata
+        {
+            get { return _metadata; }
+            set { _metadata = value.TrimMaxLength(1024); }
+        }
+    }
+    
+    
+    /// <summary>
     /// The order
     /// </summary>
     public class Order
@@ -290,28 +338,5 @@ namespace Rowdy.API.PrintAPI.Order
         /// The order has been cancelled
         /// </summary>
         public const string Cancelled = "Cancelled";
-    }
-
-    /// <summary>
-    /// The status of a Print API checkout payment
-    /// </summary>
-    public class PaymentStatus
-    {
-        /// <summary>
-        /// The payment is open
-        /// </summary>
-        public const string Open = "Open";
-        /// <summary>
-        /// The payment failed
-        /// </summary>
-        public const string Failed = "Failed";
-        /// <summary>
-        /// The payment succeeded
-        /// </summary>
-        public const string Successful = "Successful";
-        /// <summary>
-        /// The payment was cancelled
-        /// </summary>
-        public const string Cancelled = "Cancelled";
-    }
+    }    
 }

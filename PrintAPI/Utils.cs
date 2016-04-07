@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Rowdy.API.PrintAPI.Utils
+namespace Rowdy.API.PrintAPI
 {
-    class PDFHelper
+    class Utils
     {
-        public void ConvertToPDF()
+        public static void ConvertToPDF()
         {
-
+                        
         }
-    }
+
+        
+    }    
 }
