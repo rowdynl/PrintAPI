@@ -24,8 +24,7 @@ namespace Rowdy.API.PrintAPI
      public class Client
     {
         const string LIVE_BASE_URI = @"https://live.printapi.nl/v1/";
-        const string TEST_BASE_URI = @"https://test.printapi.nl/v1/";
-        const string USER_AGENT    = @"Rowdy.nl Print API C# Client v0.0.1";
+        const string TEST_BASE_URI = @"https://test.printapi.nl/v1/";        
 
         public enum Environment {TEST, LIVE};
         private OAuth.OAuthClient client;
@@ -110,7 +109,7 @@ namespace Rowdy.API.PrintAPI
         /// <returns>A ShippingQuoteResponse object with the shipping quote data</returns>
         public Shipping.ShippingQuoteResponse RequestShippingQuote(Shipping.ShippingQuoteRequest request)
         {
-            var t = client.Post("shipping/quote", JsonConvert.SerializeObject(request));
+            var t = client.Post("shipping/quote", JsonConvert.SerializeObject(request));            
             return JsonConvert.DeserializeObject<Shipping.ShippingQuoteResponse>(Convert.ToString(t.Result));
         }
         #endregion
