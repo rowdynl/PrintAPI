@@ -35,27 +35,27 @@ namespace Rowdy.API.PrintAPI.Checkout
         /// <summary>
         /// The payment status
         /// </summary>
-        public PaymentStatus status { get; }
+        public PaymentStatus status { get; set; }
 
         /// <summary>
         /// The total payment due
         /// </summary>
-        public decimal amount { get; }
+        public decimal amount { get; set; }
 
         /// <summary>
         /// The URL of the payment screen
         /// </summary>
-        public string paymentUrl { get; }
+        public string paymentUrl { get; set; }
 
         /// <summary>
         /// The URL to which your user will be returned
         /// </summary>
-        public string returnUrl { get; }
+        public string returnUrl { get; set; }
 
         /// <summary>
         /// The billing address
         /// </summary>
-        public Address billingAddress { get; }
+        public Address billingAddress { get; set; }
 
     }
 }

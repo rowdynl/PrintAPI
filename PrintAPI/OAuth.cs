@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Threading.Tasks;
 using static System.Diagnostics.Debug;
 
@@ -18,6 +19,7 @@ namespace Rowdy.API.OAuth
         private string clientSecret;
         private string scope;
         private bool authenticationInProgess;
+        private string userAgent = $"Rowdy.nl Print API C# Client v{new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version.ToString()}";
 
         /// <summary>
         /// Initialize the OAuthClient
@@ -56,9 +58,7 @@ namespace Rowdy.API.OAuth
         {
             await RefreshToken();
 
-            var client = HttpClientFactory.Create();            
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.TokenType, token.TokenString);
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var client = CreateClient();
             var httpContent = new StringContent(content, System.Text.Encoding.UTF8, contentType);
             var httpResponse = await client.PostAsync(new Uri(baseUri, path), httpContent);
 
@@ -74,12 +74,22 @@ namespace Rowdy.API.OAuth
         {
             await RefreshToken();
 
-            var client = HttpClientFactory.Create();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.TokenType, token.TokenString);
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var client = CreateClient();
             var httpResponse = await client.GetAsync(new Uri(baseUri, path));
 
             return await httpResponse.Content.ReadAsAsync<dynamic>();
+        }
+
+        internal HttpClient CreateClient(bool addAuthentication = true)
+        {
+            var client = HttpClientFactory.Create();
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);            
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            if(addAuthentication)
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.TokenType, token.TokenString);
+
+            return client;
         }
 
         /// <summary>
@@ -100,11 +110,10 @@ namespace Rowdy.API.OAuth
                 {
                     // Token needs to be refreshed
                     authenticationInProgess = true;
-                    var client = HttpClientFactory.Create();
-                    var builder = new UriBuilder(new Uri(baseUri, "oauth"));
+                    var client = CreateClient(false);                    
                     var credentials = GetCredentialsDictionary();
 
-                    var httpResponse = await client.PostAsync(builder.Uri, new FormUrlEncodedContent(credentials));
+                    var httpResponse = await client.PostAsync(new Uri(baseUri, "oauth"), new FormUrlEncodedContent(credentials));
                     var response = await httpResponse.Content.ReadAsAsync<dynamic>();
                     token = new Token
                     {

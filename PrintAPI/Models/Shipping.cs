@@ -69,26 +69,26 @@ namespace Rowdy.API.PrintAPI.Shipping
         /// <summary>
         /// The shipping cost you will be charged, excluding tax
         /// </summary>
-        public decimal shipping { get; }
+        public decimal shipping { get; set; }
 
         /// <summary>
         /// The handling cost you will be charged, excluding tax
         /// </summary>
-        public decimal handling { get; }
+        public decimal handling { get; set; }
 
         /// <summary>
         /// The amount charged on the payment screen, including tax
         /// </summary>
-        public decimal payment { get; }
+        public decimal payment { get; set; }
 
         /// <summary>
         /// The tax rate, either 0.06 or 0.21
         /// </summary>
-        public decimal taxrate { get; }
+        public decimal taxrate { get; set; }
 
         /// <summary>
         /// The shipping method most likely to be used
         /// </summary>
-        public string method { get; }
+        public string method { get; set; }
     }
 }
