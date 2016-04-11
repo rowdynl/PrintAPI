@@ -35,15 +35,14 @@ namespace Rowdy.API.OAuth
         /// </summary>
         /// <param name="id">The client id</param>
         /// <param name="secret">The secret key</param>
-        /// <returns></returns>
+        /// <returns>True if succesfull, otherwise false</returns>
         public async Task<bool> Authenticate(string id, string secret)
         {
             clientId = id;
             clientSecret = secret;
 
             await RefreshToken();
-
-
+            
             return (token != null && !String.IsNullOrEmpty(token.TokenString) && token.Expiration > DateTime.Now);
         }
 

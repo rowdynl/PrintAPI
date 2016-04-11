@@ -49,12 +49,12 @@ namespace Rowdy.API.PrintAPI.Order
             set { _metadata = value.TrimMaxLength(1024); }
         }
     }
-    
-    
+
+
     /// <summary>
     /// The order
     /// </summary>
-    public class Order
+    public class OrderResponse
     {
         /// <summary>
         /// The order ID
@@ -102,6 +102,124 @@ namespace Rowdy.API.PrintAPI.Order
         public string metadata { get; set; }
     }
 
+    /// <summary>
+    /// Get all orders, sorted newest to oldest
+    /// </summary>
+    public class OrdersResponse
+    {
+        /// <summary>
+        /// The total number of orders
+        /// </summary>
+        public int count { get; set; }
+
+        /// <summary>
+        /// The number of orders that was skipped
+        /// </summary>
+        public int offset { get; set; }
+
+        /// <summary>
+        /// The max number of orders returned
+        /// </summary>
+        public int limit { get; set; }
+
+        /// <summary>
+        /// The orders that were found
+        /// </summary>
+        public List<OrderSummary> results { get; set; }
+
+    }
+
+    /// <summary>
+    /// An entry in a list of orders
+    /// </summary>
+    public class OrderSummary
+    {
+        /// <summary>
+        /// The order ID
+        /// </summary>
+        public string id { get; set; }
+
+        /// <summary>
+        /// The e-mail address you supplied with the order
+        /// </summary>
+        public string email { get; set; }
+
+        /// <summary>
+        /// The date/time the order was created
+        /// </summary>
+        public DateTime dateTime { get; set; }
+
+        /// <summary>
+        /// The order status
+        /// </summary>
+        public OrderStatus status { get; set; }
+
+        /// <summary>
+        /// The URL from which to get the order details
+        /// </summary>
+        public string url { get; set; }
+    }
+
+    /// <summary>
+    /// Get only the status of a single order by ID
+    /// </summary>
+    public class OrderStatusResponse
+    {
+        /// <summary>
+        /// The order ID
+        /// </summary>
+        public string id { get; set; }
+
+        /// <summary>
+        /// The status of the order
+        /// </summary>
+        public OrderStatus order { get; set; }
+
+        /// <summary>
+        /// The payment status of the order
+        /// </summary>
+        public PaymentStatus payment { get; set; }
+
+    }
+
+
+    /// <summary>
+    /// Get all status updates since a specific date/time
+    /// </summary>
+    public class OrderStatusUpdateResponse
+    {
+        /// <summary>
+        /// The start date/time of the results
+        /// </summary>
+        public DateTime since { get; set; }
+
+        /// <summary>
+        /// The status updates
+        /// </summary>
+        public List<StatusUpdate> results { get; set; }
+    }
+
+    /// <summary>
+    /// A change to the status of an order
+    /// </summary>
+    public class StatusUpdate
+    {
+        /// <summary>
+        /// The order ID
+        /// </summary>
+        public string id { get; set; }
+
+        /// <summary>
+        /// The new status of the order
+        /// </summary>
+        public OrderStatus status { get; set; }
+
+        /// <summary>
+        /// The date/time of the update
+        /// </summary>
+        public DateTime dateTime { get; set; }
+    }
+
 
     /// <summary>
     /// Checkout info for an order
@@ -133,7 +251,7 @@ namespace Rowdy.API.PrintAPI.Order
     /// <summary>
     /// Details of a single item of an order
     /// </summary>
-    public class Item
+    public abstract class Item
     {
         /// <summary>
         /// The item ID

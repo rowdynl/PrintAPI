@@ -49,55 +49,89 @@ namespace Rowdy.API.PrintAPI
             task.Wait();
             
                         
-        }        
+        }
 
         #region Orders
-        public void PostOrder()
+        /// <summary>
+        /// Place an order for one or more products
+        /// </summary>
+        /// <param name="request">A OrderRequest with your order</param>
+        /// <returns>A OrderResponse object with information about your order</returns>
+        public Order.OrderResponse PostOrder(Order.OrderRequest request)
         {
-
+            var t = client.Post("orders", JsonConvert.SerializeObject(request));
+            return JsonConvert.DeserializeObject<Order.OrderResponse>(Convert.ToString(t.Result));
         }
 
-        public void GetOrder(string orderId)
+        /// <summary>
+        /// Get a single order by ID
+        /// </summary>
+        /// <param name="orderId">The order ID</param>
+        /// <returns>A OrderResponse object</returns>
+        public Order.OrderResponse GetOrder(string orderId)
         {
-
+            var t = client.Get($"orders/{orderId}");
+            return JsonConvert.DeserializeObject<Order.OrderResponse>(Convert.ToString(t.Result));
         }
 
-        public void GetOrderStatus(string orderId)
+        /// <summary>
+        /// Get only the status of a single order by ID
+        /// </summary>
+        /// <param name="orderId">The order ID</param>
+        /// <returns>A OrderStatusResponse object</returns>
+        public Order.OrderStatusResponse GetOrderStatus(string orderId)
         {
-
+            var t = client.Get($"orders/{orderId}/status");
+            return JsonConvert.DeserializeObject<Order.OrderStatusResponse>(Convert.ToString(t.Result));
         }
 
-        public void GetOrders(int limit, int offset)
+        /// <summary>
+        /// Get all orders, sorted newest to oldest
+        /// </summary>
+        /// <param name="limit">The number of orders to skip</param>
+        /// <param name="offset">The max number of orders to return</param>
+        /// <returns>A OrdersResponse object containing the results</returns>
+        public Order.OrdersResponse GetOrders(int limit, int offset)
         {
-
+            var t = client.Get($"orders?offset={offset}&limit={limit}");
+            return JsonConvert.DeserializeObject<Order.OrdersResponse>(Convert.ToString(t.Result));
         }
 
-        public void GetOrderStatusUpdates(DateTime since)
+        public Order.OrderStatusUpdateResponse GetOrderStatusUpdates(DateTime since)
         {
+            var validTo = DateTime.Now;
+            var validFrom = validTo.Add(new TimeSpan(-7, 0, 0, 0));
 
+            if (since < validFrom && since > validTo)
+                // Not a valid datetime
+                throw new PrintAPIException($"Invalid datetime! Parameter since ({since}) should be a value between {validTo} and {validFrom}");
+
+
+            var t = client.Get($"sync/statuses?since={since.ToString("s")}");
+            return JsonConvert.DeserializeObject<Order.OrderStatusUpdateResponse>(Convert.ToString(t.Result));
         }
         #endregion
         #region Checkout
         /// <summary>
-        /// 
+        /// Set up checkout for an order
         /// </summary>
-        /// <param name="orderId"></param>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        public Checkout.CheckoutResponse Checkout(string orderId, Checkout.CheckoutRequest request)
+        /// <param name="code">The checkout code</param>
+        /// <param name="request"A checkout request></param>
+        /// <returns>A CheckoutResponse object</returns>
+        public Checkout.CheckoutResponse Checkout(string code, Checkout.CheckoutRequest request)
         {
-            var t = client.Post($"checkout/{orderId}", JsonConvert.SerializeObject(request));
+            var t = client.Post($"checkout/{code}", JsonConvert.SerializeObject(request));
             return JsonConvert.DeserializeObject<Checkout.CheckoutResponse>(Convert.ToString(t.Result));
         }
 
         /// <summary>
-        /// 
+        /// Get the checkout status of an order
         /// </summary>
-        /// <param name="orderId"></param>
-        /// <returns></returns>
-        public Checkout.CheckoutResponse CheckoutStatus(string orderId)
+        /// <param name="code">The checkout code</param>
+        /// <returns>A CheckoutResponse object</returns>
+        public Checkout.CheckoutResponse CheckoutStatus(string code)
         {
-            var t = client.Get($"checkout/{orderId}");
+            var t = client.Get($"checkout/{code}");
             return JsonConvert.DeserializeObject<Checkout.CheckoutResponse>(Convert.ToString(t.Result));
         }
         #endregion
